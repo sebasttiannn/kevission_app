@@ -1,0 +1,460 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  .kv-recommendations {
+    --kv-ink: #1B1C20;
+    --kv-ink-2: #2E3038;
+    --kv-gold: #C69444;
+    --kv-gold-dark: #A67B2E;
+    --kv-gold-soft: #F7EDD8;
+    --kv-paper: #FFFFFF;
+    --kv-mist: #F7F5F0;
+    --kv-line: #E8E4DB;
+    --kv-muted: #6B6F76;
+    --kv-success: #4A7C59;
+    --kv-danger: #C05A4A;
+    font-family: 'Inter', sans-serif;
+    color: var(--kv-ink);
+  }
+
+  .kv-heading {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    color: var(--kv-ink);
+    letter-spacing: -0.02em;
+  }
+
+  .kv-subtext {
+    color: var(--kv-muted);
+    font-size: 0.95rem;
+  }
+
+  /* Formulario de ocasión */
+  .kv-form-card {
+    background: var(--kv-paper);
+    border: 1px solid var(--kv-line);
+    border-radius: 1.25rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02), 0 12px 28px rgba(0,0,0,0.04);
+    padding: 1.5rem;
+  }
+
+  .kv-form-select {
+    border: 1px solid var(--kv-line);
+    border-radius: 0.9rem;
+    padding: 0.7rem 1rem;
+    font-weight: 500;
+    background: var(--kv-mist);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .kv-form-select:focus {
+    border-color: var(--kv-gold);
+    box-shadow: 0 0 0 3px rgba(198, 148, 68, 0.1);
+    background: #fff;
+    outline: none;
+  }
+
+  .kv-btn-gold {
+    background: linear-gradient(135deg, #D4A24E 0%, #B8822C 100%);
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 2.5rem;
+    letter-spacing: 0.02em;
+    box-shadow: 0 8px 20px rgba(189, 138, 63, 0.3);
+    transition: all 0.25s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+  }
+
+  .kv-btn-gold:hover {
+    background: linear-gradient(135deg, #C4913A 0%, #9E6E23 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(189, 138, 63, 0.35);
+    color: #fff;
+  }
+
+  /* Alertas */
+  .kv-alert-danger {
+    background: #FFF5F3;
+    border: 1px solid #F5D0C9;
+    color: var(--kv-danger);
+    border-radius: 0.9rem;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 500;
+  }
+
+  .kv-alert-warning {
+    background: #FFFBF0;
+    border: 1px solid #F5E6C8;
+    color: #A67B2E;
+    border-radius: 0.9rem;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 500;
+  }
+
+  /* Tarjeta de recomendación */
+  .kv-outfit-card {
+    background: var(--kv-paper);
+    border: 1px solid var(--kv-line);
+    border-radius: 1.25rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02), 0 12px 28px rgba(0,0,0,0.04);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    height: 100%;
+  }
+
+  .kv-outfit-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.04), 0 24px 48px rgba(0,0,0,0.08);
+    border-color: var(--kv-gold-soft);
+  }
+
+  .kv-outfit-card .card-header {
+    background: var(--kv-ink);
+    color: #fff;
+    border-bottom: none;
+    padding: 1rem 1.25rem;
+    text-align: center;
+  }
+
+  .kv-outfit-card .card-header h5 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .kv-outfit-card .card-body {
+    padding: 1.5rem;
+  }
+
+  .kv-image-gallery {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    background: var(--kv-mist);
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--kv-line);
+  }
+
+  .kv-image-gallery img {
+    width: 65px;
+    height: 65px;
+    object-fit: cover;
+    border-radius: 0.6rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: transform 0.25s ease;
+    border: 1px solid var(--kv-line);
+  }
+
+  .kv-image-gallery img:hover {
+    transform: scale(1.05);
+  }
+
+  .kv-outfit-description {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--kv-ink);
+    margin-bottom: 0.5rem;
+  }
+
+  .kv-outfit-reason {
+    font-size: 0.85rem;
+    color: var(--kv-muted);
+    background: var(--kv-mist);
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--kv-line);
+  }
+
+  .kv-outfit-card .card-footer {
+    background: transparent;
+    border-top: 1px solid var(--kv-line);
+    padding: 1rem 1.5rem 1.5rem;
+  }
+
+  .kv-btn-outline-gold {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    border: 1px solid var(--kv-gold);
+    color: var(--kv-gold-dark);
+    background: transparent;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.6rem 1.4rem;
+    border-radius: 2.5rem;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    width: 100%;
+  }
+
+  .kv-btn-outline-gold:hover {
+    background: var(--kv-gold);
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(198, 148, 68, 0.25);
+  }
+
+  /* Acordeón de prompt */
+  .kv-accordion .accordion-button {
+    background: var(--kv-mist);
+    color: var(--kv-muted);
+    font-weight: 600;
+    border-radius: 0.75rem !important;
+    box-shadow: none;
+  }
+
+  .kv-accordion .accordion-button:not(.collapsed) {
+    background: var(--kv-ink);
+    color: #fff;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+  }
+
+  .kv-accordion .accordion-body {
+    background: var(--kv-ink-2);
+    color: #ddd;
+    border-bottom-left-radius: 0.75rem;
+    border-bottom-right-radius: 0.75rem;
+    padding: 1.25rem;
+  }
+
+  .kv-accordion pre {
+    color: #eee;
+    font-size: 0.85rem;
+    white-space: pre-wrap;
+  }
+
+  /* Modal */
+  .kv-modal .modal-content {
+    border-radius: 1.25rem;
+    border: 1px solid var(--kv-line);
+    overflow: hidden;
+  }
+
+  .kv-modal .modal-header {
+    background: var(--kv-success);
+    color: #fff;
+    border-bottom: none;
+    padding: 1.5rem;
+  }
+
+  .kv-modal .modal-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+  }
+
+  .kv-modal .modal-body {
+    padding: 2rem;
+  }
+
+  .kv-modal .modal-footer {
+    background: var(--kv-mist);
+    border-top: 1px solid var(--kv-line);
+    padding: 1.25rem;
+  }
+
+  .kv-btn-ink {
+    background: var(--kv-ink);
+    color: #fff;
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    border-radius: 2.5rem;
+    transition: all 0.25s ease;
+    border: none;
+  }
+
+  .kv-btn-ink:hover {
+    background: var(--kv-gold-dark);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(166, 123, 46, 0.3);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .kv-outfit-card, .kv-btn-gold, .kv-btn-outline-gold, .kv-image-gallery img {
+      transition: none !important;
+      transform: none !important;
+    }
+  }
+</style>
+
+<div class="kv-recommendations">
+  <div class="row justify-content-center mt-4">
+    <div class="col-md-10">
+      <h2 class="kv-heading text-center mb-2">Recomendaciones KeVission <i class="bi bi-magic" style="color: var(--kv-gold);"></i></h2>
+      <p class="kv-subtext text-center mb-4">Elige la ocasión y descubre combinaciones únicas de tu armario</p>
+
+      <div class="kv-form-card mb-5">
+        <form method="POST" action="{{ url_for('outfit.index') }}" class="row align-items-end">
+          <div class="col-md-9">
+            <label class="form-label fw-bold mb-2">¿Para qué ocasión te vistes hoy?</label>
+            <select class="kv-form-select form-select" name="ocasion" required>
+              <option value="casual">Casual / Universidad</option>
+              <option value="formal">Formal / Trabajo</option>
+              <option value="deporte">Deporte / Ejercicio</option>
+              <option value="fiesta">Fiesta / Evento</option>
+            </select>
+          </div>
+          <div class="col-md-3 mt-3 mt-md-0 d-grid">
+            <button type="submit" class="kv-btn-gold btn">Generar <i class="bi bi-arrow-right"></i></button>
+          </div>
+        </form>
+      </div>
+
+      {% if prompt_debug and prompt_debug.error_ia %}
+        <div class="kv-alert-danger mb-4">
+          <i class="bi bi-x-octagon-fill fs-4"></i>
+          <div>
+            <strong>¡Estilo no encontrado!</strong><br>
+            <span>{{ prompt_debug.error_ia }}</span>
+          </div>
+        </div>
+      {% elif prompt_debug and prompt_debug.error %}
+        <div class="kv-alert-warning mb-4">
+          <i class="bi bi-exclamation-triangle-fill fs-4"></i>
+          <div>
+            <span>{{ prompt_debug.error }}. ¡Añade ropa en la pestaña de Mi Armario primero!</span>
+          </div>
+        </div>
+      {% endif %}
+
+      {% if recomendaciones %}
+        <h4 class="kv-heading h5 mb-4">Tus 3 opciones basadas en tu armario:</h4>
+        <div class="row g-4 mb-5">
+          {% for opcion in recomendaciones %}
+          <div class="col-md-4">
+            <div class="kv-outfit-card card border-0 h-100">
+              <div class="card-header">
+                <h5><i class="bi {{ opcion.icono }} text-warning"></i> {{ opcion.estilo }}</h5>
+              </div>
+              <div class="card-body d-flex flex-column">
+                <div class="kv-image-gallery">
+                  {% for img_url in opcion.imagenes %}
+                    <img src="{{ url_for('static', filename=img_url) }}" alt="Prenda">
+                  {% endfor %}
+                </div>
+                <p class="kv-outfit-description">{{ opcion.descripcion }}</p>
+                <div class="kv-outfit-reason mt-auto">
+                  <i class="bi bi-info-circle-fill me-1"></i> <strong>Análisis:</strong> {{ opcion.motivo }}
+                </div>
+              </div>
+              <div class="card-footer">
+                <button type="button" class="kv-btn-outline-gold btn" 
+                        onclick='mostrarEleccion("{{ opcion.estilo }}", {{ opcion.imagenes | tojson }})'>
+                  <i class="bi bi-check2-circle"></i> ¡Me quedo con este!
+                </button>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% if prompt_debug and not prompt_debug.error and not prompt_debug.error_ia %}
+        <div class="kv-accordion accordion shadow-sm mb-5" id="accordionPrompt">
+          <div class="accordion-item border-0">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePrompt">
+                <i class="bi bi-terminal me-2"></i> Ver Prompt Generado (Backstage)
+              </button>
+            </h2>
+            <div id="collapsePrompt" class="accordion-collapse collapse" data-bs-parent="#accordionPrompt">
+              <div class="accordion-body">
+                <p class="text-warning mb-1 small"><i class="bi bi-gear-fill"></i> System Prompt (Personalidad de la IA):</p>
+                <pre class="small border-bottom border-secondary pb-3">{{ prompt_debug.system }}</pre>
+                
+                <p class="text-info mb-1 small mt-3"><i class="bi bi-person-fill"></i> User Prompt (Datos inyectados):</p>
+                <pre class="small mb-0">{{ prompt_debug.user }}</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Modal sin cambios en ids ni JS -->
+  <div class="modal fade kv-modal" id="modalEleccion" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg text-center">
+        <div class="modal-header justify-content-center">
+          <h4 class="modal-title fw-bold"><i class="bi bi-stars"></i> ¡Excelente elección!</h4>
+        </div>
+        <div class="modal-body">
+          <p class="lead mb-4">Has elegido el estilo <strong><span id="nombreEstiloModal"></span></strong> para tu día.</p>
+          
+          <div class="d-flex justify-content-center gap-3 flex-wrap mb-4" id="imagenesModalContenedor">
+            <!-- JS llena esto -->
+          </div>
+          
+          <p class="text-muted small">Tu selección ha sido guardada en tu historial. ¡Que tengas un gran día en Temuco!</p>
+        </div>
+        <div class="modal-footer justify-content-center">
+          <a href="{{ url_for('dashboard') }}" class="kv-btn-ink btn">Ir al Inicio</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function mostrarEleccion(estilo, imagenes) {
+    fetch("{{ url_for('outfit.guardar_eleccion') }}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            "estilo": estilo,
+            "imagenes": imagenes
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.status === "success") {
+            document.getElementById('nombreEstiloModal').innerText = estilo;
+            const contenedor = document.getElementById('imagenesModalContenedor');
+            contenedor.innerHTML = '';
+            
+            imagenes.forEach(img => {
+                const urlFinal = "{{ url_for('static', filename='') }}" + img;
+                contenedor.innerHTML += `
+                    <img src="${urlFinal}" class="rounded shadow border border-secondary" style="width: 100px; height: 100px; object-fit: cover;" alt="Prenda">
+                `;
+            });
+            
+            var miModal = new bootstrap.Modal(document.getElementById('modalEleccion'));
+            miModal.show();
+        } else {
+            alert("Hubo un error al guardar tu elección.");
+        }
+    })
+    .catch(error => console.error("Error:", error));
+}
+</script>
+{% endblock %}

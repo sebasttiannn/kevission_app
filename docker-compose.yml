@@ -1,0 +1,46 @@
+version: "3.9"
+
+# Este compose sirve para PROBAR LOCAL antes de desplegar en AWS.
+# Simula el mismo esquema: app contenerizada + base de datos gestionada tipo MySQL.
+# En la nube, "db" se reemplaza por el endpoint de RDS/Aurora (ver terraform/).
+
+services:
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-kevission_root}
+      MYSQL_DATABASE: ${DB_NAME:-kevission}
+      MYSQL_USER: ${DB_USER:-kevission}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-kevission_pass}
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-kevission_root}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      SECRET_KEY: ${SECRET_KEY:-clave_secreta_local_kevission_123}
+      DATABASE_URI: mysql+pymysql://${DB_USER:-kevission}:${DB_PASSWORD:-kevission_pass}@db:3306/${DB_NAME:-kevission}
+      STORAGE_TYPE: ${STORAGE_TYPE:-local}
+      AZURE_STORAGE_CONNECTION_STRING: ${AZURE_STORAGE_CONNECTION_STRING:-}
+      AZURE_STORAGE_CONTAINER: ${AZURE_STORAGE_CONTAINER:-kevission-prendas}
+      OPENWEATHER_KEY: ${OPENWEATHER_KEY:-tu_clave_api_aqui}
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - uploads_data:/app/app/static/uploads
+
+volumes:
+  db_data:
+  uploads_data:

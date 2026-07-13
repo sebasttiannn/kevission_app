@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  .kv-history {
+    --kv-ink: #1B1C20;
+    --kv-gold: #C69444;
+    --kv-gold-dark: #A67B2E;
+    --kv-gold-soft: #F7EDD8;
+    --kv-paper: #FFFFFF;
+    --kv-mist: #F7F5F0;
+    --kv-line: #E8E4DB;
+    --kv-muted: #6B6F76;
+    font-family: 'Inter', sans-serif;
+    color: var(--kv-ink);
+  }
+
+  .kv-history .kv-heading {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    color: var(--kv-ink);
+    letter-spacing: -0.02em;
+  }
+
+  .kv-history .kv-subtext {
+    color: var(--kv-muted);
+    font-size: 0.95rem;
+  }
+
+  .kv-btn-outline-gold {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: 1px solid var(--kv-gold);
+    color: var(--kv-gold-dark);
+    background: transparent;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.5rem 1.4rem;
+    border-radius: 2.5rem;
+    text-decoration: none;
+    transition: all 0.25s ease;
+  }
+
+  .kv-btn-outline-gold:hover {
+    background: var(--kv-gold);
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(198, 148, 68, 0.25);
+  }
+
+  /* Card de outfit */
+  .kv-outfit-card {
+    background: var(--kv-paper);
+    border: 1px solid var(--kv-line);
+    border-radius: 1.25rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02), 0 12px 28px rgba(0,0,0,0.04);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+
+  .kv-outfit-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.04), 0 24px 48px rgba(0,0,0,0.08);
+    border-color: var(--kv-gold-soft);
+  }
+
+  .kv-outfit-card .card-header {
+    background: var(--kv-ink);
+    color: #fff;
+    border-bottom: none;
+    font-weight: 600;
+    padding: 1rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .kv-outfit-card .card-header .kv-style-badge {
+    text-transform: capitalize;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .kv-outfit-card .card-header .kv-date {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.75);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .kv-outfit-card .card-body {
+    background: var(--kv-mist);
+    padding: 1.25rem;
+  }
+
+  .kv-image-gallery {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    background: #fff;
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--kv-line);
+  }
+
+  .kv-image-gallery img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 0.6rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    border: 1px solid var(--kv-line);
+  }
+
+  .kv-image-gallery img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+  }
+
+  /* Estado vacío */
+  .kv-empty-state {
+    background: var(--kv-paper);
+    border: 1px solid var(--kv-line);
+    border-radius: 1.25rem;
+    padding: 4rem 2rem;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02), 0 12px 28px rgba(0,0,0,0.04);
+  }
+
+  .kv-empty-state i {
+    font-size: 3.5rem;
+    color: var(--kv-muted);
+    opacity: 0.5;
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+
+  .kv-empty-state h4 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    color: var(--kv-ink);
+    margin-bottom: 0.5rem;
+  }
+
+  .kv-empty-state p {
+    color: var(--kv-muted);
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .kv-outfit-card, .kv-outfit-card:hover, .kv-image-gallery img, .kv-btn-outline-gold {
+      transition: none !important;
+      transform: none !important;
+    }
+  }
+</style>
+
+<div class="kv-history">
+  <div class="row mb-4 align-items-center mt-4">
+    <div class="col-md-8">
+      <h2 class="kv-heading h3 mb-1">Historial de Outfits <i class="bi bi-clock-history text-muted ms-2"></i></h2>
+      <p class="kv-subtext mb-0">Aquí puedes revisar todas las combinaciones que has elegido para tus días.</p>
+    </div>
+    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+      <a href="{{ url_for('dashboard') }}" class="kv-btn-outline-gold">
+        <i class="bi bi-house-door"></i> Ir al Inicio
+      </a>
+    </div>
+  </div>
+
+  {% if historial %}
+    <div class="row g-4">
+      {% for item in historial %}
+      <div class="col-md-6">
+        <div class="kv-outfit-card card border-0 h-100">
+          <div class="card-header">
+            <span class="kv-style-badge"><i class="bi bi-stars text-warning"></i> {{ item.estilo }}</span>
+            <span class="kv-date"><i class="bi bi-calendar3"></i> {{ item.fecha }}</span>
+          </div>
+          <div class="card-body">
+            <div class="kv-image-gallery">
+              {% for img in item.imagenes %}
+                <img src="{{ url_for('static', filename=img) }}" alt="Prenda">
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="kv-empty-state mt-4">
+      <i class="bi bi-emoji-expressionless"></i>
+      <h4>Tu historial está vacío</h4>
+      <p>Ve a la pestaña de recomendaciones, genera estilos y presiona "¡Me quedo con este!" para guardar tu primer look.</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --kv-ink: #1B1C20;
+    --kv-gold: #C69444;
+    --kv-gold-dark: #A67B2E;
+    --kv-gold-soft: #F7EDD8;
+    --kv-paper: #FFFFFF;
+    --kv-mist: #F7F5F0;
+    --kv-line: #E8E4DB;
+    --kv-muted: #6B6F76;
+  }
+
+  .kv-login-wrapper {
+    font-family: 'Inter', sans-serif;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #FCFAF7;
+    padding: 2rem;
+  }
+
+  .kv-login-card {
+    background: var(--kv-paper);
+    border: 1px solid var(--kv-line);
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02), 0 20px 40px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    max-width: 480px;
+    width: 100%;
+  }
+
+  .kv-login-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.04), 0 30px 60px rgba(0, 0, 0, 0.08);
+  }
+
+  .kv-login-header {
+    background: var(--kv-ink);
+    padding: 2rem 2rem 1.5rem;
+    text-align: center;
+    color: #fff;
+  }
+
+  .kv-login-header h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.8rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+
+  .kv-login-body {
+    padding: 2rem;
+  }
+
+  .kv-form-label {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--kv-ink);
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.02em;
+  }
+
+  .kv-form-control {
+    border: 1px solid var(--kv-line);
+    border-radius: 0.9rem;
+    padding: 0.7rem 1rem;
+    font-size: 0.95rem;
+    background: var(--kv-mist);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+  }
+
+  .kv-form-control:focus {
+    border-color: var(--kv-gold);
+    box-shadow: 0 0 0 3px rgba(198, 148, 68, 0.1);
+    background: #fff;
+    outline: none;
+  }
+
+  .kv-btn-login {
+    background: linear-gradient(135deg, #D4A24E 0%, #B8822C 100%);
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 2.5rem;
+    letter-spacing: 0.02em;
+    box-shadow: 0 8px 20px rgba(189, 138, 63, 0.3);
+    transition: all 0.25s ease;
+  }
+
+  .kv-btn-login:hover {
+    background: linear-gradient(135deg, #C4913A 0%, #9E6E23 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(189, 138, 63, 0.35);
+  }
+
+  .kv-divider {
+    border-top: 1px solid var(--kv-line);
+    margin: 1.8rem 0;
+    opacity: 0.7;
+  }
+
+  .kv-qr-section {
+    text-align: center;
+  }
+
+  .kv-qr-label {
+    color: var(--kv-muted);
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+
+  .kv-qr-image {
+    border: 1px solid var(--kv-line);
+    border-radius: 1rem;
+    padding: 0.5rem;
+    background: #fff;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.03);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .kv-qr-image:hover {
+    transform: scale(1.02);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.06);
+  }
+
+  .kv-link-gold {
+    color: var(--kv-gold-dark);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .kv-link-gold:hover {
+    color: var(--kv-gold);
+    text-decoration: underline;
+  }
+
+  .kv-register-text {
+    color: var(--kv-muted);
+    font-size: 0.95rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .kv-login-card, .kv-btn-login, .kv-qr-image {
+      transition: none !important;
+      transform: none !important;
+    }
+  }
+</style>
+
+<div class="kv-login-wrapper">
+    <div class="kv-login-card">
+        <div class="kv-login-header">
+            <h3>Iniciar Sesión en KeVission</h3>
+        </div>
+        <div class="kv-login-body">
+            <form method="POST" action="{{ url_for('auth.login') }}">
+                <div class="mb-3">
+                    <label for="email" class="kv-form-label">Correo Electrónico</label>
+                    <input type="email" class="kv-form-control form-control" id="email" name="email" required placeholder="tu@email.com">
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="kv-form-label">Contraseña</label>
+                    <input type="password" class="kv-form-control form-control" id="password" name="password" required placeholder="••••••••">
+                </div>
+                <div class="d-grid mb-4">
+                    <button type="submit" class="kv-btn-login btn">Entrar</button>
+                </div>
+            </form>
+
+            <hr class="kv-divider">
+
+            <div class="kv-qr-section mt-4">
+                <p class="kv-qr-label">¿Estás en tu computador? Escanea para entrar desde tu celular:</p>
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=http://127.0.0.1:5000/login" alt="Código QR de Login" class="kv-qr-image">
+            </div>
+
+            <div class="text-center mt-4">
+                <p class="kv-register-text">¿No tienes cuenta? <a href="{{ url_for('auth.register') }}" class="kv-link-gold">Regístrate aquí</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

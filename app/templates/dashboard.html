@@ -1,0 +1,355 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  .kv-dashboard {
+    --kv-ink: #1B1C20;
+    --kv-ink-2: #2E3038;
+    --kv-ink-3: #20242B;
+    --kv-paper: #FFFFFF;
+    --kv-mist: #F5F2EC;
+    --kv-line: #E7E2D8;
+    --kv-gold: #BD8A3F;
+    --kv-gold-dark: #9C702E;
+    --kv-gold-soft: #F1E3C4;
+    --kv-ice: #8FB0C2;
+    --kv-muted: #6B6F76;
+    font-family: 'Inter', sans-serif;
+    color: var(--kv-ink);
+  }
+
+  .kv-eyebrow {
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-size: .72rem;
+    font-weight: 600;
+    color: var(--kv-gold-dark);
+  }
+
+  .kv-heading {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(1.6rem, 3vw, 2.15rem);
+    color: var(--kv-ink);
+  }
+
+  .kv-tagline {
+    color: var(--kv-muted);
+    font-size: .98rem;
+  }
+
+  .kv-section-title {
+    font-weight: 700;
+    color: var(--kv-ink);
+  }
+
+  .kv-card-title {
+    font-weight: 600;
+    color: var(--kv-ink);
+    letter-spacing: -.01em;
+  }
+
+  .kv-icon-gold { color: var(--kv-gold); }
+
+  /* Base card */
+  .kv-card {
+    background: var(--kv-paper);
+    border: 1px solid var(--kv-line);
+    border-radius: 1rem;
+    box-shadow: 0 1px 2px rgba(20,20,20,.03), 0 10px 24px rgba(20,20,20,.04);
+    transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  }
+
+  .kv-card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 8px rgba(20,20,20,.05), 0 20px 36px rgba(20,20,20,.09);
+    border-color: var(--kv-gold-soft);
+  }
+
+  /* Weather hero card — signature element */
+  .kv-weather-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1rem;
+    background: linear-gradient(135deg, var(--kv-ink) 0%, var(--kv-ink-2) 55%, var(--kv-ink-3) 100%);
+    padding: 2rem 1.75rem;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,.18);
+  }
+
+  .kv-weather-card::before {
+    content: "";
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: var(--kv-ice);
+    opacity: .18;
+    filter: blur(10px);
+  }
+
+  .kv-weather-card::after {
+    content: "";
+    position: absolute;
+    bottom: -50px;
+    left: -30px;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: var(--kv-gold);
+    opacity: .14;
+    filter: blur(14px);
+  }
+
+  .kv-weather-content { position: relative; z-index: 1; width: 100%; }
+
+  .kv-weather-label {
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    font-size: .72rem;
+    font-weight: 600;
+    color: rgba(255,255,255,.65);
+  }
+
+  .kv-weather-temp {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 3.6rem;
+    line-height: 1.05;
+    margin: .25rem 0;
+  }
+
+  .kv-weather-location {
+    font-size: .9rem;
+    color: rgba(255,255,255,.75);
+  }
+
+  /* Pills / badges */
+  .kv-pill-soft {
+    display: inline-flex;
+    align-items: center;
+    background: var(--kv-gold-soft);
+    color: var(--kv-gold-dark);
+    font-size: .76rem;
+    font-weight: 600;
+    border-radius: 999px;
+    padding: .32rem .8rem;
+  }
+
+  /* Quick action chips */
+  .kv-chip {
+    display: inline-flex;
+    align-items: center;
+    background: var(--kv-paper);
+    color: var(--kv-ink);
+    border: 1px solid var(--kv-line);
+    border-radius: 999px;
+    padding: .55rem 1.25rem;
+    font-size: .92rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color .2s ease, border-color .2s ease, color .2s ease, transform .2s ease;
+  }
+
+  .kv-chip:hover {
+    background: var(--kv-gold-soft);
+    border-color: var(--kv-gold);
+    color: var(--kv-gold-dark);
+    transform: translateY(-2px);
+  }
+
+  .kv-chip-active {
+    background: var(--kv-ink);
+    border-color: var(--kv-ink);
+    color: #fff;
+  }
+
+  .kv-chip-active:hover {
+    background: var(--kv-gold);
+    border-color: var(--kv-gold);
+    color: #fff;
+  }
+
+  /* Buttons */
+  .kv-btn-gold,
+  .kv-btn-ink {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: .92rem;
+    padding: .55rem 1.4rem;
+    text-decoration: none;
+    transition: background-color .2s ease, color .2s ease, box-shadow .2s ease, transform .2s ease;
+  }
+
+  .kv-btn-gold {
+    background: var(--kv-gold);
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(189,138,63,.28);
+  }
+
+  .kv-btn-gold:hover {
+    background: var(--kv-gold-dark);
+    color: #fff;
+    transform: translateY(-1px);
+  }
+
+  .kv-btn-gold i { transition: transform .2s ease; }
+  .kv-btn-gold:hover i { transform: translateX(3px); }
+
+  .kv-btn-ink {
+    background: var(--kv-ink);
+    color: #fff;
+  }
+
+  .kv-btn-ink:hover {
+    background: var(--kv-gold-dark);
+    color: #fff;
+  }
+
+  /* Icon badge */
+  .kv-icon-badge {
+    width: 46px;
+    height: 46px;
+    flex: 0 0 46px;
+    border-radius: 50%;
+    background: var(--kv-mist);
+    color: var(--kv-ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+  }
+
+  /* List */
+  .kv-list .list-group-item {
+    border-color: var(--kv-line);
+    transition: background-color .2s ease;
+  }
+
+  .kv-list .list-group-item:hover {
+    background: var(--kv-mist);
+  }
+
+  /* Focus visibility */
+  .kv-dashboard a:focus-visible {
+    outline: 2px solid var(--kv-gold);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .kv-card, .kv-card-hover, .kv-chip, .kv-chip-active, .kv-btn-gold, .kv-btn-ink, .kv-btn-gold i {
+      transition: none !important;
+      transform: none !important;
+    }
+  }
+</style>
+
+<div class="kv-dashboard">
+
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <span class="kv-eyebrow">Tu panel de estilo</span>
+            <h2 class="kv-heading fw-semibold mt-2 mb-2">Bienvenido, {{ session.get('usuario_nombre') }}</h2>
+            <p class="kv-tagline fst-italic mb-0">"KeVission recomienda tu outfit, tu personalidad crea el estilo."</p>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-lg-4">
+            <div class="kv-weather-card h-100">
+                <div class="kv-weather-content">
+                    <span class="kv-weather-label"><i class="bi bi-cloud-sun me-1"></i> Clima actual</span>
+                    <div class="kv-weather-temp">12°C</div>
+                    <div class="kv-weather-location"><i class="bi bi-geo-alt-fill me-1"></i>Temuco</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="card kv-card kv-card-hover h-100">
+                <div class="card-body p-4 d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h5 class="kv-card-title mb-0"><i class="bi bi-stars kv-icon-gold me-2"></i>Outfit Recomendado</h5>
+                        <span class="kv-pill-soft">Para hoy</span>
+                    </div>
+                    <p class="text-muted mb-4">Aún no has generado tu recomendación para el clima de hoy. Tienes 0 prendas listas en tu armario.</p>
+                    <a href="{{ url_for('outfit.index') }}" class="kv-btn-gold mt-auto align-self-start">Generar ahora <i class="bi bi-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-12">
+            <h5 class="kv-section-title mb-3">¿Qué quieres hacer hoy?</h5>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{{ url_for('outfit.index') }}" class="kv-chip"><i class="bi bi-book me-2"></i>Universidad</a>
+                <a href="{{ url_for('outfit.index') }}" class="kv-chip"><i class="bi bi-briefcase me-2"></i>Trabajo</a>
+                <a href="{{ url_for('outfit.index') }}" class="kv-chip"><i class="bi bi-heart me-2"></i>Cita</a>
+                <a href="{{ url_for('outfit.index') }}" class="kv-chip"><i class="bi bi-airplane me-2"></i>Viaje</a>
+                <a href="{{ url_for('outfit.index') }}" class="kv-chip kv-chip-active"><i class="bi bi-calendar-event me-2"></i>Evento Especial</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-6">
+            <div class="card kv-card kv-card-hover h-100">
+                <div class="card-body p-4 d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="kv-icon-badge"><i class="bi bi-door-open"></i></span>
+                        <div>
+                            <h5 class="kv-card-title mb-1">Mi Armario</h5>
+                            <p class="text-muted small mb-0">Gestiona tus prendas registradas</p>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('wardrobe.index') }}" class="kv-btn-ink">Ver Armario</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card kv-card h-100">
+                <div class="card-body p-4">
+                    <h6 class="kv-card-title small text-uppercase mb-2"><i class="bi bi-lightbulb kv-icon-gold me-2"></i>Consejo de Estilo</h6>
+                    <p class="small text-muted mb-0 fst-italic">"Los tonos oscuros absorben el calor. Para un día de 12°C, usar capas (layering) es tu mejor opción."</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card kv-card">
+                <div class="card-header bg-transparent border-0 pt-4 px-4">
+                    <h5 class="kv-card-title mb-0"><i class="bi bi-clock-history kv-icon-gold me-2"></i>Últimos Outfits</h5>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush kv-list">
+                        <li class="list-group-item d-flex justify-content-between align-items-center py-3 px-4">
+                            <div>
+                                <span class="fw-semibold d-block">Casual Viernes</span>
+                                <small class="text-muted">Polera negra + Pantalón gris</small>
+                            </div>
+                            <span class="kv-pill-soft">Hace 2 días</span>
+                        </li>
+                        <li class="list-group-item text-center py-5 px-4 text-muted small">
+                            <i class="bi bi-hanger d-block mb-2" style="font-size:1.3rem; opacity:.4;"></i>
+                            Aún no hay más historial guardado.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,524 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  .kv-wardrobe {
+    --kv-ink: #1B1C20;
+    --kv-gold: #C69444;
+    --kv-gold-dark: #A67B2E;
+    --kv-gold-soft: #F7EDD8;
+    --kv-paper: #FFFFFF;
+    --kv-mist: #F7F5F0;
+    --kv-line: #E8E4DB;
+    --kv-muted: #6B6F76;
+    font-family: 'Inter', sans-serif;
+    color: var(--kv-ink);
+  }
+
+  .kv-heading {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    color: var(--kv-ink);
+    letter-spacing: -0.02em;
+  }
+
+  .kv-subtext {
+    color: var(--kv-muted);
+    font-size: 0.95rem;
+  }
+
+  .kv-btn-outline-gold {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: 1px solid var(--kv-gold);
+    color: var(--kv-gold-dark);
+    background: transparent;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.55rem 1.4rem;
+    border-radius: 2.5rem;
+    text-decoration: none;
+    transition: all 0.25s ease;
+  }
+
+  .kv-btn-outline-gold:hover {
+    background: var(--kv-gold);
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(198, 148, 68, 0.25);
+  }
+
+  .kv-btn-gold {
+    background: linear-gradient(135deg, #D4A24E 0%, #B8822C 100%);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.55rem 1.4rem;
+    border: none;
+    border-radius: 2.5rem;
+    letter-spacing: 0.02em;
+    box-shadow: 0 6px 16px rgba(189, 138, 63, 0.28);
+    transition: all 0.25s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .kv-btn-gold:hover {
+    background: linear-gradient(135deg, #C4913A 0%, #9E6E23 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(189, 138, 63, 0.35);
+    color: #fff;
+  }
+
+  /* Badge de categoría */
+  .kv-category-badge {
+    background: var(--kv-mist);
+    color: var(--kv-ink);
+    border: 1px solid var(--kv-line);
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.35rem 1rem;
+    border-radius: 2rem;
+  }
+
+  /* Tarjeta de prenda */
+  .kv-prenda-card {
+    background: var(--kv-paper);
+    border: 1px solid var(--kv-line);
+    border-radius: 1.25rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02), 0 12px 28px rgba(0,0,0,0.04);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    height: 100%;
+  }
+
+  .kv-prenda-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.04), 0 24px 48px rgba(0,0,0,0.08);
+    border-color: var(--kv-gold-soft);
+  }
+
+  .kv-prenda-card img {
+    height: 220px;
+    object-fit: cover;
+  }
+
+  .kv-prenda-card .card-body {
+    background: var(--kv-mist);
+    padding: 0.75rem 1rem;
+  }
+
+  .kv-prenda-color {
+    font-weight: 700;
+    text-transform: capitalize;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+  }
+
+  .kv-prenda-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--kv-muted);
+  }
+
+  /* Badges dentro de tarjeta */
+  .kv-style-badge {
+    background: var(--kv-ink);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: capitalize;
+    padding: 0.25rem 0.7rem;
+    border-radius: 2rem;
+  }
+
+  .kv-action-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.9);
+    border: 1px solid var(--kv-line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    transition: all 0.2s ease;
+    color: var(--kv-ink);
+  }
+
+  .kv-action-btn:hover {
+    background: #fff;
+    transform: scale(1.08);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+
+  .kv-edit-btn:hover { color: #3b82f6; }
+  .kv-delete-btn:hover { color: #ef4444; }
+
+  /* Modal premium */
+  .kv-modal .modal-content {
+    border-radius: 1.25rem;
+    border: 1px solid var(--kv-line);
+    overflow: hidden;
+  }
+
+  .kv-modal .modal-header {
+    background: var(--kv-mist);
+    border-bottom: 1px solid var(--kv-line);
+    padding: 1.25rem 1.5rem;
+  }
+
+  .kv-modal .modal-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    color: var(--kv-ink);
+  }
+
+  .kv-modal .modal-body {
+    padding: 1.5rem;
+  }
+
+  .kv-modal .modal-footer {
+    background: var(--kv-mist);
+    border-top: 1px solid var(--kv-line);
+    padding: 1rem 1.5rem;
+  }
+
+  .kv-form-control {
+    border: 1px solid var(--kv-line);
+    border-radius: 0.75rem;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.9rem;
+    background: #fff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .kv-form-control:focus {
+    border-color: var(--kv-gold);
+    box-shadow: 0 0 0 3px rgba(198, 148, 68, 0.12);
+    outline: none;
+  }
+
+  .kv-form-label {
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--kv-muted);
+    margin-bottom: 0.3rem;
+  }
+
+  .kv-btn-secondary {
+    background: transparent;
+    border: 1px solid var(--kv-line);
+    color: var(--kv-ink);
+    font-weight: 600;
+    padding: 0.6rem 1.5rem;
+    border-radius: 2.5rem;
+    transition: all 0.2s ease;
+  }
+
+  .kv-btn-secondary:hover {
+    background: var(--kv-mist);
+    border-color: var(--kv-ink);
+  }
+
+  .kv-btn-ink {
+    background: var(--kv-ink);
+    color: #fff;
+    border: none;
+    font-weight: 600;
+    padding: 0.6rem 1.5rem;
+    border-radius: 2.5rem;
+    transition: all 0.25s ease;
+  }
+
+  .kv-btn-ink:hover {
+    background: var(--kv-gold-dark);
+    color: #fff;
+    box-shadow: 0 8px 16px rgba(166, 123, 46, 0.25);
+  }
+
+  .kv-upload-preview {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 0.75rem;
+    border: 1px solid var(--kv-line);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+  }
+
+  .kv-checkbox {
+    accent-color: var(--kv-gold);
+  }
+
+  /* Estado vacío */
+  .kv-empty-state {
+    background: var(--kv-paper);
+    border: 1px solid var(--kv-line);
+    border-radius: 1.25rem;
+    padding: 4rem 2rem;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02), 0 12px 28px rgba(0,0,0,0.04);
+  }
+
+  .kv-empty-state i {
+    font-size: 3.5rem;
+    color: var(--kv-muted);
+    opacity: 0.5;
+    display: block;
+    margin-bottom: 1.5rem;
+  }
+
+  .kv-empty-state h4 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    color: var(--kv-ink);
+    margin-bottom: 0.5rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .kv-prenda-card, .kv-btn-gold, .kv-btn-outline-gold, .kv-action-btn {
+      transition: none !important;
+      transform: none !important;
+    }
+  }
+</style>
+
+<div class="kv-wardrobe">
+  <div class="row mb-4 align-items-center">
+    <div class="col-md-7">
+      <h2 class="kv-heading h3 mb-1">Mi Armario Digital <i class="bi bi-door-open text-muted ms-2"></i></h2>
+      <p class="kv-subtext mb-0">Tienes <strong>{{ total_prendas }}</strong> prendas registradas listas para combinar.</p>
+    </div>
+    <div class="col-md-5 text-end d-flex gap-2 justify-content-end mt-3 mt-md-0">
+      <a href="{{ url_for('outfit.historial') }}" class="kv-btn-outline-gold">
+        <i class="bi bi-clock-history me-1"></i> Ver Historial
+      </a>
+      <button type="button" class="kv-btn-gold btn" data-bs-toggle="modal" data-bs-target="#subirPrendaModal">
+        <i class="bi bi-plus-lg me-1"></i> Añadir Prenda
+      </button>
+    </div>
+  </div>
+
+  {% if prendas_agrupadas %}
+    {% for categoria, lista_prendas in prendas_agrupadas.items() %}
+      <div class="mb-5">
+        <h4 class="kv-heading h5 mb-3 pb-2 text-capitalize d-flex justify-content-between align-items-center border-bottom" style="border-color: var(--kv-line) !important;">
+          {{ categoria }}
+          <span class="kv-category-badge">{{ lista_prendas|length }} prendas</span>
+        </h4>
+        
+        <div class="row g-4">
+          {% for prenda in lista_prendas %}
+          <div class="col-md-3">
+            <div class="kv-prenda-card card border-0 position-relative">
+              
+              <div class="position-absolute top-0 start-0 m-2 d-flex gap-1 z-1">
+                <button type="button" class="kv-action-btn kv-edit-btn btn" data-bs-toggle="modal" data-bs-target="#editarModal{{ prenda.id }}" title="Editar Prenda">
+                  <i class="bi bi-pencil-fill fs-6"></i>
+                </button>
+                <form action="{{ url_for('wardrobe.eliminar', prenda_id=prenda.id) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Seguro que quieres borrar esta prenda? No podrás recuperarla.');">
+                  <button type="submit" class="kv-action-btn kv-delete-btn btn" title="Eliminar Prenda">
+                    <i class="bi bi-trash-fill fs-6"></i>
+                  </button>
+                </form>
+              </div>
+
+              <span class="kv-style-badge position-absolute top-0 end-0 m-2 shadow-sm z-1">
+                {{ prenda.estilo if prenda.estilo else 'casual' }}
+              </span>
+              
+              <img src="{{ imagen_url(prenda.imagen_ruta) }}" class="card-img-top rounded-top" alt="Prenda">
+              <div class="card-body">
+                <p class="kv-prenda-color">{{ prenda.color }}</p>
+                <div class="kv-prenda-meta">
+                  <span><i class="bi bi-tag-fill me-1"></i>{{ prenda.marca if prenda.marca else 'Sin marca' }}</span>
+                  <span><i class="bi bi-rulers me-1"></i>{{ prenda.talla if prenda.talla else 'N/A' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal de edición -->
+          <div class="modal fade kv-modal" id="editarModal{{ prenda.id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content border-0 shadow">
+                <div class="modal-header">
+                  <h5 class="modal-title">Editar Prenda</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" action="{{ url_for('wardrobe.editar', prenda_id=prenda.id) }}">
+                  <div class="modal-body">
+                    <div class="text-center mb-4">
+                      <img src="{{ imagen_url(prenda.imagen_ruta) }}" class="kv-upload-preview">
+                      <p class="small text-muted mt-2">Para cambiar la foto, elimina esta prenda y súbela de nuevo.</p>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <label class="kv-form-label">Categoría</label>
+                        <select class="kv-form-control form-select" name="categoria" required>
+                          <option value="poleras" {% if prenda.categoria == 'poleras' %}selected{% endif %}>Poleras / Camisetas</option>
+                          <option value="camisas" {% if prenda.categoria == 'camisas' %}selected{% endif %}>Camisas</option>
+                          <option value="pantalones" {% if prenda.categoria == 'pantalones' %}selected{% endif %}>Pantalones / Jeans</option>
+                          <option value="zapatillas" {% if prenda.categoria == 'zapatillas' %}selected{% endif %}>Zapatillas / Calzado</option>
+                          <option value="chaquetas" {% if prenda.categoria == 'chaquetas' %}selected{% endif %}>Chaquetas / Abrigos</option>
+                          <option value="accesorios" {% if prenda.categoria == 'accesorios' %}selected{% endif %}>Accesorios</option>
+                        </select>
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label class="kv-form-label">Color</label>
+                        <input type="text" class="kv-form-control form-control" name="color" value="{{ prenda.color }}" required>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <label class="kv-form-label">Marca</label>
+                        <input type="text" class="kv-form-control form-control" name="marca" value="{{ prenda.marca }}">
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label class="kv-form-label">Talla</label>
+                        <input type="text" class="kv-form-control form-control" name="talla" value="{{ prenda.talla }}">
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12 mb-3">
+                        <label class="kv-form-label d-block">Estilos Asociados</label>
+                        {% set estilos_prenda = prenda.estilo.split(',') if prenda.estilo else [] %}
+                        <div class="form-check form-check-inline mt-2">
+                          <input class="form-check-input kv-checkbox" type="checkbox" name="estilo" value="casual" {% if 'casual' in estilos_prenda %}checked{% endif %}>
+                          <label class="form-check-label small">Casual</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input kv-checkbox" type="checkbox" name="estilo" value="formal" {% if 'formal' in estilos_prenda %}checked{% endif %}>
+                          <label class="form-check-label small">Formal</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input kv-checkbox" type="checkbox" name="estilo" value="deporte" {% if 'deporte' in estilos_prenda %}checked{% endif %}>
+                          <label class="form-check-label small">Deporte</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input kv-checkbox" type="checkbox" name="estilo" value="fiesta" {% if 'fiesta' in estilos_prenda %}checked{% endif %}>
+                          <label class="form-check-label small">Fiesta</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="kv-btn-secondary btn" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="kv-btn-ink btn">Actualizar Prenda</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="kv-empty-state mt-4">
+      <i class="bi bi-box-seam"></i>
+      <h4>Tu armario está vacío</h4>
+      <p class="text-muted">¡Añade tu primera prenda para empezar a generar estilos!</p>
+    </div>
+  {% endif %}
+
+  <!-- Modal de subir prenda -->
+  <div class="modal fade kv-modal" id="subirPrendaModal" tabindex="-1" aria-labelledby="subirPrendaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header">
+          <h5 class="modal-title" id="subirPrendaModalLabel">Subir Nueva Prenda</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form method="POST" action="{{ url_for('wardrobe.upload') }}" enctype="multipart/form-data">
+          <div class="modal-body">
+            <div class="mb-4">
+              <label class="kv-form-label">Seleccionar Imagen</label>
+              <input type="file" class="kv-form-control form-control" name="imagen" accept=".jpg,.jpeg,.png" required>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="kv-form-label">Categoría</label>
+                <select class="kv-form-control form-select" name="categoria" id="selectCategoria" required>
+                  <option value="poleras">Poleras / Camisetas</option>
+                  <option value="camisas">Camisas</option>
+                  <option value="pantalones">Pantalones / Jeans</option>
+                  <option value="zapatillas">Zapatillas / Calzado</option>
+                  <option value="chaquetas">Chaquetas / Abrigos</option>
+                  <option value="accesorios">Accesorios (Relojes, Gorros...)</option>
+                </select>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="kv-form-label">Color Principal</label>
+                <input type="text" class="kv-form-control form-control" name="color" placeholder="Ej. Negro, Blanco..." required>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="kv-form-label">Marca</label>
+                <input type="text" class="kv-form-control form-control" name="marca" placeholder="Ej. Nike, Zara...">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="kv-form-label">Talla</label>
+                <input type="text" class="kv-form-control form-control" name="talla" id="inputTalla" placeholder="Ej. M, 42...">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12 mb-3">
+                <label class="kv-form-label d-block">¿A qué estilos asocias esta prenda?</label>
+                <div class="form-check form-check-inline mt-2">
+                  <input class="form-check-input kv-checkbox" type="checkbox" name="estilo" value="casual" id="checkCasual">
+                  <label class="form-check-label small" for="checkCasual">Casual / Diario</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input kv-checkbox" type="checkbox" name="estilo" value="formal" id="checkFormal">
+                  <label class="form-check-label small" for="checkFormal">Formal / Elegante</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input kv-checkbox" type="checkbox" name="estilo" value="deporte" id="checkDeporte">
+                  <label class="form-check-label small" for="checkDeporte">Deporte / Gym</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input kv-checkbox" type="checkbox" name="estilo" value="fiesta" id="checkFiesta">
+                  <label class="form-check-label small" for="checkFiesta">Fiesta / Evento</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="kv-btn-secondary btn" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="kv-btn-ink btn">Guardar Prenda</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const selectCategoria = document.getElementById('selectCategoria');
+        const inputTalla = document.getElementById('inputTalla');
+
+        selectCategoria.addEventListener('change', function() {
+            if (this.value === 'accesorios') {
+                inputTalla.value = 'N/A';
+                inputTalla.disabled = true;
+            } else {
+                if (inputTalla.value === 'N/A') inputTalla.value = '';
+                inputTalla.disabled = false;
+            }
+        });
+    });
+</script>
+{% endblock %}

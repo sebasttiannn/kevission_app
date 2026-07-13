@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  .kv-weather-page {
+    --kv-ink: #1B1C20;
+    --kv-ink-2: #2E3038;
+    --kv-gold: #C69444;
+    --kv-gold-dark: #A67B2E;
+    --kv-gold-soft: #F7EDD8;
+    --kv-paper: #FFFFFF;
+    --kv-mist: #F7F5F0;
+    --kv-line: #E8E4DB;
+    --kv-muted: #6B6F76;
+    font-family: 'Inter', sans-serif;
+    color: var(--kv-ink);
+  }
+
+  .kv-weather-page .kv-eyebrow {
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    font-size: .7rem;
+    font-weight: 700;
+    color: var(--kv-gold-dark);
+    background: var(--kv-gold-soft);
+    padding: .25rem .9rem;
+    border-radius: 2rem;
+  }
+
+  .kv-weather-page .kv-heading {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    font-weight: 600;
+    color: var(--kv-ink);
+    letter-spacing: -0.02em;
+  }
+
+  /* Tarjeta de búsqueda */
+  .kv-search-card {
+    background: var(--kv-paper);
+    border: 1px solid var(--kv-line);
+    border-radius: 1.25rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02), 0 12px 28px rgba(0,0,0,0.04);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .kv-search-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.04), 0 20px 40px rgba(0,0,0,0.06);
+  }
+
+  .kv-search-card .form-control {
+    border: 1px solid var(--kv-line);
+    border-radius: 0.75rem;
+    padding: 0.7rem 1rem;
+    font-size: 0.95rem;
+    background: var(--kv-mist);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+  }
+
+  .kv-search-card .form-control:focus {
+    border-color: var(--kv-gold);
+    box-shadow: 0 0 0 3px rgba(198,148,68,0.1);
+    background: #fff;
+    outline: none;
+  }
+
+  .kv-btn-gold {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    background: linear-gradient(135deg, #D4A24E 0%, #B8822C 100%);
+    color: #fff;
+    border: none;
+    border-radius: 2.5rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0.7rem 1.6rem;
+    white-space: nowrap;
+    box-shadow: 0 8px 20px rgba(189,138,63,0.3);
+    transition: all 0.25s ease;
+  }
+
+  .kv-btn-gold:hover {
+    background: linear-gradient(135deg, #C4913A 0%, #9E6E23 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(189,138,63,0.35);
+    color: #fff;
+  }
+
+  /* Alerta de error */
+  .kv-alert-warning {
+    background: #FFFBF0;
+    border: 1px solid #F5E6C8;
+    color: #A67B2E;
+    border-radius: 0.9rem;
+    padding: 1rem 1.25rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  /* Tarjeta de resultado del clima */
+  .kv-weather-result {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1.5rem;
+    background: linear-gradient(145deg, #1f2127 0%, #2a2d35 55%, #1a1c22 100%);
+    color: #fff;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.05) inset;
+    backdrop-filter: blur(10px);
+  }
+
+  .kv-weather-result::before {
+    content: "";
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(143,176,194,0.25) 0%, transparent 70%);
+    filter: blur(12px);
+  }
+
+  .kv-weather-result::after {
+    content: "";
+    position: absolute;
+    bottom: -70px;
+    left: -50px;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(198,148,68,0.2) 0%, transparent 70%);
+    filter: blur(16px);
+  }
+
+  .kv-weather-result-content {
+    position: relative;
+    z-index: 1;
+    padding: 3rem 2rem;
+  }
+
+  .kv-weather-city {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 1.8rem;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.5rem;
+  }
+
+  .kv-weather-icon {
+    filter: drop-shadow(0 8px 16px rgba(0,0,0,0.3));
+    transition: transform 0.3s ease;
+  }
+
+  .kv-weather-icon:hover {
+    transform: scale(1.1);
+  }
+
+  .kv-weather-temp {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 5.5rem;
+    line-height: 1;
+    margin: 0.5rem 0;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+
+  .kv-weather-desc {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 2rem;
+    padding: 0.5rem 1.5rem;
+    font-size: 1rem;
+    text-transform: capitalize;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  /* Estado inicial sutil */
+  .kv-weather-placeholder {
+    text-align: center;
+    padding: 2rem;
+    color: var(--kv-muted);
+    background: var(--kv-mist);
+    border-radius: 1rem;
+    border: 1px dashed var(--kv-line);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .kv-btn-gold, .kv-search-card, .kv-weather-icon {
+      transition: none !important;
+      transform: none !important;
+    }
+  }
+</style>
+
+<div class="kv-weather-page row justify-content-center mt-4">
+  <div class="col-md-6 col-lg-5">
+    <div class="text-center mb-4">
+      <span class="kv-eyebrow">Pronóstico al instante</span>
+      <h2 class="kv-heading mt-2 mb-1">Consulta el Clima <i class="bi bi-cloud-sun"></i></h2>
+      <p class="text-muted small">Descubre cómo vestirte según el tiempo en tu ciudad</p>
+    </div>
+
+    <div class="kv-search-card mb-4">
+      <div class="card-body p-3 p-sm-4">
+        <form method="POST" action="{{ url_for('weather.index') }}" class="d-flex flex-column flex-sm-row gap-2">
+          <input type="text" class="form-control flex-grow-1" name="ciudad" placeholder="Ej. Santiago, Buenos Aires..." required>
+          <button type="submit" class="kv-btn-gold"><i class="bi bi-search me-2"></i>Buscar</button>
+        </form>
+      </div>
+    </div>
+
+    {% if error %}
+      <div class="kv-alert-warning text-center mb-4">
+        <i class="bi bi-exclamation-triangle fs-5"></i>
+        <span>{{ error }}</span>
+      </div>
+    {% endif %}
+
+    {% if clima %}
+      <div class="kv-weather-result">
+        <div class="kv-weather-result-content text-center">
+          <h3 class="kv-weather-city">{{ clima.ciudad }}</h3>
+          <img src="http://openweathermap.org/img/wn/{{ clima.icono }}@4x.png" alt="Icono Clima" class="kv-weather-icon" width="140" height="140">
+          <div class="kv-weather-temp">{{ clima.temperatura }}°C</div>
+          <span class="kv-weather-desc">{{ clima.descripcion }}</span>
+        </div>
+      </div>
+    {% else %}
+      {% if not error %}
+        <div class="kv-weather-placeholder">
+          <i class="bi bi-cloud-drizzle fs-1 text-muted mb-2 d-block"></i>
+          <p class="mb-0">Ingresa el nombre de una ciudad para ver el clima actual.</p>
+        </div>
+      {% endif %}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
