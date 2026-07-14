@@ -355,4 +355,24 @@
     </div>
 
 </div>
+<script>
+  // Si todavía no tenemos coordenadas en la URL, pedimos ubicación al navegador
+  {% if not tiene_ubicacion %}
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      function (pos) {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+        const url = new URL(window.location.href);
+        url.searchParams.set('lat', lat);
+        url.searchParams.set('lon', lon);
+        window.location.href = url.toString();
+      },
+      function (error) {
+        console.log("Ubicación no disponible o rechazada, se usa ciudad por defecto.");
+      }
+    );
+  }
+  {% endif %}
+</script>
 {% endblock %}

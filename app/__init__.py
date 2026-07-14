@@ -1,4 +1,4 @@
-from flask import Flask, render_template, session, redirect, url_for
+from flask import Flask, render_template, session, redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 import os
 from dotenv import load_dotenv
@@ -77,13 +77,18 @@ def create_app():
                 "cantidad_prendas": len(imgs),
             })
 
-        # --- Clima real para el widget del dashboard ---
-        ciudad_default = 'Temuco'
-        clima = {"temperatura": 12, "ciudad": ciudad_default}
+        # --- Clima real, usando ubicación del navegador si está disponible ---
+        lat = request.args.get('lat')
+        lon = request.args.get('lon')
+
+        clima = {"temperatura": 12, "ciudad": "Temuco"}
         api_key = os.getenv('OPENWEATHER_KEY')
         if api_key and api_key != 'tu_clave_api_aqui':
             try:
-                url = f"http://api.openweathermap.org/data/2.5/weather?q={ciudad_default}&appid={api_key}&units=metric&lang=es"
+                if lat and lon:
+                    url = f"http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}&units=metric&lang=es"
+                else:
+                    url = f"http://api.openweathermap.org/data/2.5/weather?q=Temuco&appid={api_key}&units=metric&lang=es"
                 resp = requests.get(url, timeout=5)
                 if resp.status_code == 200:
                     datos = resp.json()
@@ -92,14 +97,14 @@ def create_app():
                         "ciudad": datos['name'],
                     }
             except Exception:
-                pass  # si falla, se queda con el valor por defecto de arriba
+                pass
 
-        # Si está logueado, le mostramos el panel
         return render_template(
             'dashboard.html',
             nombre=session.get('usuario_nombre'),
             prenda_count=prenda_count,
             ultimos_outfits=ultimos_outfits,
             clima=clima,
+            tiene_ubicacion=bool(lat and lon),
         )
     return app
