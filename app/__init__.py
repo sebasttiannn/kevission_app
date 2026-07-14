@@ -56,6 +56,8 @@ def create_app():
             return redirect(url_for('auth.login'))
 
         from .models import Prenda, HistorialOutfit
+        import os
+        import requests
 
         prenda_count = Prenda.query.filter_by(usuario_id=session['usuario_id']).count()
 
@@ -75,11 +77,29 @@ def create_app():
                 "cantidad_prendas": len(imgs),
             })
 
+        # --- Clima real para el widget del dashboard ---
+        ciudad_default = 'Temuco'
+        clima = {"temperatura": 12, "ciudad": ciudad_default}
+        api_key = os.getenv('OPENWEATHER_KEY')
+        if api_key and api_key != 'tu_clave_api_aqui':
+            try:
+                url = f"http://api.openweathermap.org/data/2.5/weather?q={ciudad_default}&appid={api_key}&units=metric&lang=es"
+                resp = requests.get(url, timeout=5)
+                if resp.status_code == 200:
+                    datos = resp.json()
+                    clima = {
+                        "temperatura": round(datos['main']['temp']),
+                        "ciudad": datos['name'],
+                    }
+            except Exception:
+                pass  # si falla, se queda con el valor por defecto de arriba
+
         # Si está logueado, le mostramos el panel
         return render_template(
             'dashboard.html',
             nombre=session.get('usuario_nombre'),
             prenda_count=prenda_count,
             ultimos_outfits=ultimos_outfits,
+            clima=clima,
         )
     return app
