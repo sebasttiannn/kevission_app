@@ -281,7 +281,7 @@
                         <h5 class="kv-card-title mb-0"><i class="bi bi-stars kv-icon-gold me-2"></i>Outfit Recomendado</h5>
                         <span class="kv-pill-soft">Para hoy</span>
                     </div>
-                    <p class="text-muted mb-4">Aún no has generado tu recomendación para el clima de hoy. Tienes 0 prendas listas en tu armario.</p>
+                    <p class="text-muted mb-4">Aún no has generado tu recomendación para el clima de hoy. Tienes {{ prenda_count }} prenda(s) lista(s) en tu armario.</p>
                     <a href="{{ url_for('outfit.index') }}" class="kv-btn-gold mt-auto align-self-start">Generar ahora <i class="bi bi-arrow-right ms-1"></i></a>
                 </div>
             </div>
@@ -334,17 +334,20 @@
                 </div>
                 <div class="card-body p-0">
                     <ul class="list-group list-group-flush kv-list">
+                        {% for o in ultimos_outfits %}
                         <li class="list-group-item d-flex justify-content-between align-items-center py-3 px-4">
                             <div>
-                                <span class="fw-semibold d-block">Casual Viernes</span>
-                                <small class="text-muted">Polera negra + Pantalón gris</small>
+                                <span class="fw-semibold d-block">{{ o.estilo }}</span>
+                                <small class="text-muted">{{ o.cantidad_prendas }} prenda(s) en esta elección</small>
                             </div>
-                            <span class="kv-pill-soft">Hace 2 días</span>
+                            <span class="kv-pill-soft">{{ o.fecha }}</span>
                         </li>
+                        {% else %}
                         <li class="list-group-item text-center py-5 px-4 text-muted small">
                             <i class="bi bi-hanger d-block mb-2" style="font-size:1.3rem; opacity:.4;"></i>
-                            Aún no hay más historial guardado.
+                            Aún no hay historial guardado.
                         </li>
+                        {% endfor %}
                     </ul>
                 </div>
             </div>

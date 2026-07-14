@@ -54,8 +54,32 @@ def create_app():
         # Si no hay sesión, lo mandamos al login
         if 'usuario_id' not in session:
             return redirect(url_for('auth.login'))
-        
-        # Si está logueado, le mostramos el panel
-        return render_template('dashboard.html', nombre=session.get('usuario_nombre'))
 
+        from .models import Prenda, HistorialOutfit
+
+        prenda_count = Prenda.query.filter_by(usuario_id=session['usuario_id']).count()
+
+        historial_bd = (
+            HistorialOutfit.query
+            .filter_by(usuario_id=session['usuario_id'])
+            .order_by(HistorialOutfit.fecha.desc())
+            .limit(3)
+            .all()
+        )
+        ultimos_outfits = []
+        for h in historial_bd:
+            imgs = h.imagenes.split(',') if h.imagenes else []
+            ultimos_outfits.append({
+                "estilo": h.estilo,
+                "fecha": h.fecha.strftime('%d/%m/%Y %H:%M'),
+                "cantidad_prendas": len(imgs),
+            })
+
+        # Si está logueado, le mostramos el panel
+        return render_template(
+            'dashboard.html',
+            nombre=session.get('usuario_nombre'),
+            prenda_count=prenda_count,
+            ultimos_outfits=ultimos_outfits,
+        )
     return app
