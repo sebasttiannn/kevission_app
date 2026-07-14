@@ -191,7 +191,7 @@
           <div class="card-body">
             <div class="kv-image-gallery">
               {% for img in item.imagenes %}
-                <img src="{{ url_for('static', filename=img) }}" alt="Prenda">
+                <img src="{{ imagen_url(img) }}" alt="Prenda">
               {% endfor %}
             </div>
           </div>

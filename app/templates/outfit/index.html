@@ -355,7 +355,7 @@
               <div class="card-body d-flex flex-column">
                 <div class="kv-image-gallery">
                   {% for img_url in opcion.imagenes %}
-                    <img src="{{ url_for('static', filename=img_url) }}" alt="Prenda">
+                    <img src="{{ imagen_url(img_url) }}" alt="Prenda">
                   {% endfor %}
                 </div>
                 <p class="kv-outfit-description">{{ opcion.descripcion }}</p>
@@ -442,7 +442,7 @@ function mostrarEleccion(estilo, imagenes) {
             contenedor.innerHTML = '';
             
             imagenes.forEach(img => {
-                const urlFinal = "{{ url_for('static', filename='') }}" + img;
+                const urlFinal = (img.startsWith("http://") || img.startsWith("https://")) ? img : ("{{ url_for('static', filename='') }}" + img);
                 contenedor.innerHTML += `
                     <img src="${urlFinal}" class="rounded shadow border border-secondary" style="width: 100px; height: 100px; object-fit: cover;" alt="Prenda">
                 `;
