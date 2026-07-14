@@ -83,7 +83,7 @@ def create_app():
 
         clima = {"temperatura": 12, "ciudad": "Temuco"}
         api_key = os.getenv('OPENWEATHER_KEY')
-        if api_key and api_key != 'tu_clave_api_aqui':
+        if api_key and api_key != '8302594edf51d7978718f90e9ccd2061':
             try:
                 if lat and lon:
                     url = f"http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}&units=metric&lang=es"
