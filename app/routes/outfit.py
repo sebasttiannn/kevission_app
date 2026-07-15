@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, session, redirect, url_for, jsonify
 from ..models import Prenda
 from ..services.ai_prompt import construir_prompt, simular_respuesta_ia
+from ..services.clima_service import obtener_clima
 
 outfit_bp = Blueprint('outfit', __name__, url_prefix='/recomendacion')
 
@@ -14,8 +15,11 @@ def index():
     
     if request.method == 'POST':
         ocasion = request.form.get('ocasion')
-        temperatura_actual = 12 
-        
+
+        ciudad_actual = session.get('ciudad_clima', 'Temuco')
+        clima = obtener_clima(ciudad_actual)
+        temperatura_actual = clima['temperatura']
+
         prendas_bd = Prenda.query.filter_by(usuario_id=session['usuario_id']).all()
         
         if not prendas_bd:
@@ -28,8 +32,8 @@ def index():
             sys_prompt, usr_prompt = construir_prompt(ocasion, temperatura_actual, prendas_texto)
             prompt_debug = {"system": sys_prompt, "user": usr_prompt}
             
-            # Llamamos a la simulación pasándole la ocasión y la lista de prendas completa
-            recomendaciones = simular_respuesta_ia(ocasion, prendas_bd)
+            # Llamamos a la simulación pasándole la ocasión, la ropa, y el clima real de la ciudad elegida
+            recomendaciones = simular_respuesta_ia(ocasion, prendas_bd, temperatura_actual)
             
             # Si la IA devuelve un diccionario con un error por falta de prendas específicas
             if isinstance(recomendaciones, dict) and "error_ia" in recomendaciones:
