@@ -159,3 +159,51 @@ def editar(prenda_id):
         flash('Datos de la prenda actualizados.', 'success')
         
     return redirect(url_for('wardrobe.index'))
+
+# --- RUTA TEMPORAL: CARGAR PRENDAS DE PRUEBA (solo para testing/demo, quitar antes de producción real) ---
+@wardrobe_bp.route('/seed_demo')
+def seed_demo():
+    if 'usuario_id' not in session:
+        return redirect(url_for('auth.login'))
+
+    prendas_demo = [
+        # (categoria, color, marca, talla, estilo, semilla_imagen)
+        ('poleras', 'Negro', 'Nike', 'M', 'casual,deporte', 'top1'),
+        ('poleras', 'Blanco', 'Adidas', 'M', 'casual', 'top2'),
+        ('camisas', 'Celeste', 'Zara', 'M', 'formal,casual', 'top3'),
+        ('camisas', 'Blanco', 'Hugo Boss', 'L', 'formal', 'top4'),
+        ('poleras', 'Rojo', 'Puma', 'M', 'deporte', 'top5'),
+        ('poleras', 'Negro', 'Zara', 'S', 'fiesta,casual', 'top6'),
+
+        ('pantalones', 'Azul', 'Levis', 'M', 'casual,fiesta', 'pant1'),
+        ('pantalones', 'Negro', 'Zara', 'M', 'formal,fiesta', 'pant2'),
+        ('pantalones', 'Gris', 'Nike', 'M', 'deporte,casual', 'pant3'),
+        ('pantalones', 'Beige', 'Dockers', 'M', 'formal', 'pant4'),
+        ('pantalones', 'Negro', 'Adidas', 'M', 'deporte', 'pant5'),
+
+        ('zapatillas', 'Blanco', 'Nike', '42', 'casual,deporte', 'shoe1'),
+        ('zapatillas', 'Negro', 'Adidas', '42', 'deporte,fiesta', 'shoe2'),
+        ('zapatillas', 'Café', 'Clarks', '42', 'formal', 'shoe3'),
+
+        ('chaquetas', 'Negro', 'The North Face', 'M', 'casual,formal', 'jacket1'),
+        ('chaquetas', 'Azul', 'Columbia', 'M', 'deporte,casual', 'jacket2'),
+
+        ('accesorios', 'Negro', 'Ray-Ban', 'Única', 'casual,fiesta', 'acc1'),
+        ('accesorios', 'Plata', 'Casio', 'Única', 'formal,casual', 'acc2'),
+    ]
+
+    for categoria, color, marca, talla, estilo, semilla in prendas_demo:
+        nueva = Prenda(
+            usuario_id=session['usuario_id'],
+            imagen_ruta=f'https://picsum.photos/seed/{semilla}/400/400',
+            categoria=categoria,
+            color=color,
+            marca=marca,
+            talla=talla,
+            estilo=estilo,
+        )
+        db.session.add(nueva)
+
+    db.session.commit()
+    flash(f'{len(prendas_demo)} prendas de prueba agregadas a tu armario.', 'success')
+    return redirect(url_for('wardrobe.index'))
