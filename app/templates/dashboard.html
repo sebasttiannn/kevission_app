@@ -271,6 +271,13 @@
                     <span class="kv-weather-label"><i class="bi bi-cloud-sun me-1"></i> Clima actual</span>
                     <div class="kv-weather-temp">{{ clima.temperatura }}°C</div>
                     <div class="kv-weather-location"><i class="bi bi-geo-alt-fill me-1"></i>{{ clima.ciudad }}</div>
+                    {% if clima.error %}
+                    <div class="small mt-1" style="color:#e8b4a8;">No se encontró esa ciudad, verifica el nombre.</div>
+                    {% endif %}
+                    <form method="GET" action="{{ url_for('dashboard') }}" class="d-flex gap-2 mt-3">
+                        <input type="text" name="ciudad" placeholder="Cambiar ciudad..." class="form-control form-control-sm" style="max-width:160px;">
+                        <button type="submit" class="btn btn-sm" style="background:var(--kv-gold); color:#fff;">Ir</button>
+                    </form>
                 </div>
             </div>
         </div>

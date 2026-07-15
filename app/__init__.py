@@ -59,6 +59,14 @@ def create_app():
         import os
         import requests
 
+        # Si el usuario mandó una ciudad nueva por el formulario, la guardamos en su sesión
+        ciudad_nueva = request.args.get('ciudad')
+        if ciudad_nueva:
+            session['ciudad_clima'] = ciudad_nueva.strip()
+            return redirect(url_for('dashboard'))
+
+        ciudad_actual = session.get('ciudad_clima', 'Temuco')
+
         prenda_count = Prenda.query.filter_by(usuario_id=session['usuario_id']).count()
 
         historial_bd = (
@@ -77,27 +85,24 @@ def create_app():
                 "cantidad_prendas": len(imgs),
             })
 
-        # --- Clima real, usando ubicación del navegador si está disponible ---
-        lat = request.args.get('lat')
-        lon = request.args.get('lon')
-
-        clima = {"temperatura": 12, "ciudad": "Temuco"}
+        # --- Clima real, usando la ciudad elegida por el usuario ---
+        clima = {"temperatura": 12, "ciudad": ciudad_actual, "error": False}
         api_key = os.getenv('OPENWEATHER_KEY')
-        if api_key and api_key != '8302594edf51d7978718f90e9ccd2061':
+        if api_key and api_key != 'tu_clave_api_aqui':
             try:
-                if lat and lon:
-                    url = f"http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}&units=metric&lang=es"
-                else:
-                    url = f"http://api.openweathermap.org/data/2.5/weather?q=Temuco&appid={api_key}&units=metric&lang=es"
+                url = f"http://api.openweathermap.org/data/2.5/weather?q={ciudad_actual}&appid={api_key}&units=metric&lang=es"
                 resp = requests.get(url, timeout=5)
                 if resp.status_code == 200:
                     datos = resp.json()
                     clima = {
                         "temperatura": round(datos['main']['temp']),
                         "ciudad": datos['name'],
+                        "error": False,
                     }
+                else:
+                    clima["error"] = True
             except Exception:
-                pass
+                clima["error"] = True
 
         return render_template(
             'dashboard.html',
@@ -105,6 +110,5 @@ def create_app():
             prenda_count=prenda_count,
             ultimos_outfits=ultimos_outfits,
             clima=clima,
-            tiene_ubicacion=bool(lat and lon),
         )
     return app
